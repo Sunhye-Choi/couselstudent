@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>담임 선생님 상담 신청서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fffdf6; --line:#e9e2cf; --ink:#3b3a36; --sub:#7a7568;
+    --main:#f59e6b; --main-dark:#e07a45; --mint:#d9f2e6; --sky:#e3f0ff;
+    --yellow:#fff3c4; --red:#d9480f; --stamp:#d63b3b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:'Gowun Dodum',system-ui,sans-serif; color:var(--ink);
+    background:#f6efe1 radial-gradient(circle at 1px 1px,#e8dcc3 1px,transparent 0) 0 0/22px 22px;
+    line-height:1.6;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:28px 16px 60px}
+  h1,h2,.jua{font-family:'Jua',sans-serif;font-weight:400}
+  header{text-align:center;margin-bottom:18px}
+  header h1{font-size:2rem;margin:0}
+  header p{margin:4px 0 0;color:var(--sub)}
+  .card{
+    background:var(--paper); border-radius:18px; padding:22px 20px; margin-bottom:16px;
+    box-shadow:0 2px 0 var(--line),0 8px 24px rgba(120,100,60,.08); border:1px solid var(--line);
+  }
+  .notice{background:#fff0ea;border:2px dashed #f4a582}
+  .notice b{color:var(--red)}
+  .notice ul{margin:6px 0 0;padding-left:20px}
+  .privacy{background:var(--sky);border:none;font-size:.95rem}
+  h2{font-size:1.3rem;margin:0 0 4px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;
+       border-radius:50%;background:var(--main);color:#fff;font-size:1rem;margin-right:6px;vertical-align:2px}
+  .hint{color:var(--sub);font-size:.92rem;margin:0 0 12px}
+  .req{color:var(--red)}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row>label{flex:1;min-width:160px}
+  label.field{display:block;font-weight:bold;margin-bottom:4px}
+  input[type=text],textarea{
+    width:100%;font:inherit;font-size:1.05rem;padding:12px 14px;border-radius:12px;
+    border:2px solid var(--line);background:#fff;color:var(--ink);transition:border-color .15s;
+  }
+  input[type=text]:focus,textarea:focus{outline:none;border-color:var(--main)}
+  textarea{min-height:150px;resize:vertical;
+    background:#fff repeating-linear-gradient(#fff 0 31px,#f1ebdc 31px 32px);line-height:32px;padding-top:6px}
+  .counter{text-align:right;font-size:.85rem;color:var(--sub)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips input{position:absolute;opacity:0;pointer-events:none}
+  .chips label{
+    cursor:pointer;padding:9px 14px;border-radius:999px;border:2px solid var(--line);
+    background:#fff;user-select:none;transition:.15s;font-size:1rem;
+  }
+  .chips label:hover{border-color:var(--main)}
+  .chips input:checked+label{background:var(--main);border-color:var(--main);color:#fff}
+  .chips input:focus-visible+label{outline:3px solid #ffd2b8}
+  .urgent-tip{display:none;margin-top:10px;padding:10px 14px;border-radius:12px;background:#ffe3e3;color:#a61e1e}
+  .urgent-tip.show{display:block}
+
+  .pledge{background:var(--yellow);border:2px solid #f2d675;position:relative;overflow:hidden}
+  .pledge h2{text-align:center}
+  .pledge-text{font-size:1.1rem;text-align:center;margin:10px 0 16px;word-break:keep-all}
+  .pledge-text .who{border-bottom:2px solid var(--ink);padding:0 6px;font-weight:bold;min-width:60px;display:inline-block}
+  .check{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:bold;cursor:pointer;margin-bottom:12px}
+  .check input{width:22px;height:22px;accent-color:var(--main-dark)}
+  .sign{display:flex;align-items:center;justify-content:center;gap:10px}
+  .sign input{max-width:200px;text-align:center}
+  .stamp{
+    position:absolute;right:18px;bottom:14px;width:78px;height:78px;border:4px solid var(--stamp);
+    border-radius:50%;color:var(--stamp);font-family:'Jua';display:flex;align-items:center;justify-content:center;
+    text-align:center;font-size:1.05rem;line-height:1.1;transform:rotate(-14deg) scale(2);opacity:0;
+    transition:transform .25s cubic-bezier(.3,1.6,.6,1),opacity .2s;pointer-events:none;background:rgba(255,255,255,.35)
+  }
+  .stamp.on{opacity:.85;transform:rotate(-14deg) scale(1)}
+
+  button.submit{
+    width:100%;font-family:'Jua';font-size:1.35rem;padding:16px;border:none;border-radius:16px;
+    background:var(--main);color:#fff;cursor:pointer;box-shadow:0 5px 0 var(--main-dark);transition:.1s;
+  }
+  button.submit:active{transform:translateY(3px);box-shadow:0 2px 0 var(--main-dark)}
+  button.submit:disabled{background:#cfc6b4;box-shadow:0 5px 0 #b3a993;cursor:not-allowed}
+  .error{display:none;margin:12px 0 0;padding:12px 14px;border-radius:12px;background:#ffe3e3;color:#a61e1e;font-weight:bold}
+  .error.show{display:block}
+  .invalid{border-color:#f08c8c!important}
+
+  #done{display:none;text-align:center;padding:40px 20px}
+  #done .big{font-size:4rem}
+  #done h2{font-size:1.7rem;margin:6px 0}
+  #done .ticket{display:inline-block;margin:10px 0 18px;padding:8px 18px;border-radius:12px;background:var(--mint);font-family:'Jua';font-size:1.2rem}
+  .setup-warn{display:none;background:#fff;border:3px solid var(--red);color:var(--red);font-weight:bold}
+  @media (max-width:520px){header h1{font-size:1.6rem}.stamp{width:62px;height:62px;font-size:.9rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>💌 담임 선생님 상담 신청서</h1>
+    <p>말로 하기 어려운 이야기, 글로 천천히 써도 괜찮아요.</p>
+  </header>
+
+  <div class="card setup-warn" id="setupWarn">
+    ⚙️ 아직 서버 주소(SCRIPT_URL)가 설정되지 않았어요. 선생님께 알려 주세요.
+  </div>
+
+  <div class="card notice">
+    <b>🚨 지금 위험하거나 아주 급한 일이라면</b> 이 신청서를 쓰기보다 <b>바로</b> 도움을 요청하세요.
+    <ul>
+      <li>담임 선생님이나 가까운 선생님께 직접 말하기</li>
+      <li>Wee클래스(전문상담 선생님) 찾아가기</li>
+      <li>청소년 상담전화 <b>☎ 1388</b> (24시간, 문자 #1388)</li>
+    </ul>
+  </div>
+
+  <div class="card privacy">🔒 여기에 쓴 내용은 <b>담임 선생님만</b> 볼 수 있어요. 친구들은 볼 수 없어요.</div>
+
+  <form id="form" novalidate>
+    <div class="card">
+      <h2><span class="num">1</span>나는 누구인가요? <span class="req">*</span></h2>
+      <div class="row" style="margin-top:10px">
+        <label><span class="field">학번</span>
+          <input type="text" id="studentId" inputmode="numeric" maxlength="6" placeholder="예: 10312" autocomplete="off">
+        </label>
+        <label><span class="field">이름</span>
+          <input type="text" id="name" maxlength="20" placeholder="예: 김하늘" autocomplete="off">
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">2</span>어떤 이야기인가요? <span class="req">*</span></h2>
+      <p class="hint">가장 가까운 것 하나를 골라 주세요.</p>
+      <div class="chips" data-name="topic" data-type="radio">
+        <span>친구 관계</span><span>공부·성적</span><span>진로·꿈</span><span>가족·집</span>
+        <span>학교생활·규칙</span><span>몸·마음 건강</span><span>기타</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">3</span>무슨 일이 있었나요? <span class="req">*</span></h2>
+      <p class="hint">✏️ <b>언제</b>, <b>누구와</b>, <b>어떤 일</b>이 있었는지 순서대로 써 보세요. 생각나는 대로 써도 괜찮아요.</p>
+      <textarea id="story" maxlength="3000" placeholder="예: 지난주 금요일 점심시간에, 같은 반 친구와 ○○ 때문에 다퉜어요. 그 뒤로..."></textarea>
+      <div class="counter"><span id="storyCount">0</span> / 3000자 (최소 10자)</div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">4</span>그때 기분은 어땠나요?</h2>
+      <p class="hint">여러 개 골라도 돼요.</p>
+      <div class="chips" data-name="feeling" data-type="checkbox">
+        <span>😢 속상해요</span><span>😠 화가 나요</span><span>😟 걱정돼요</span><span>😮‍💨 답답해요</span>
+        <span>😳 창피해요</span><span>😨 무서워요</span><span>😔 외로워요</span><span>🤔 잘 모르겠어요</span>
+      </div>
+      <input type="text" id="feelingMore" maxlength="300" placeholder="기분을 더 쓰고 싶다면 여기에 (선택)" style="margin-top:12px">
+    </div>
+
+    <div class="card">
+      <h2><span class="num">5</span>선생님께 바라는 것은?</h2>
+      <div class="chips" data-name="wish" data-type="radio">
+        <span>그냥 들어 주세요</span><span>해결 방법을 같이 찾고 싶어요</span>
+        <span>다른 어른께 도움을 요청해 주세요</span><span>글로 답장만 받고 싶어요</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="num">6</span>얼마나 급한가요?</h2>
+      <div class="chips" data-name="urgency" data-type="radio">
+        <span>🐢 천천히 괜찮아요</span><span>📅 이번 주 안에</span><span>🔥 빨리 이야기하고 싶어요</span>
+      </div>
+      <div class="urgent-tip" id="urgentTip">🔥 정말 급한 일이라면 신청서를 보낸 뒤 <b>선생님께 직접</b> “상담 신청서 봐 주세요”라고 말해 주세요.</div>
+
+      <h2 style="margin-top:20px"><span class="num">7</span>상담할 수 있는 시간</h2>
+      <p class="hint">여러 개 골라도 돼요.</p>
+      <div class="chips" data-name="times" data-type="checkbox">
+        <span>아침 조회 전</span><span>쉬는 시간</span><span>점심시간</span><span>종례 후</span><span>언제든 괜찮아요</span>
+      </div>
+    </div>
+
+    <div class="card pledge">
+      <h2>📜 약속합니다 <span class="req">*</span></h2>
+      <p class="pledge-text">
+        나 <span class="who" id="pledgeName">&nbsp;</span> 은(는)<br>
+        위 내용을 <b>사실 그대로</b> 작성했으며,<br>
+        장난이나 다른 친구를 곤란하게 하려는 목적이 <b>아님</b>을 약속합니다.
+      </p>
+      <label class="check"><input type="checkbox" id="pledge"> 위 내용을 약속해요</label>
+      <div class="sign">
+        <span class="jua">서명:</span>
+        <input type="text" id="signature" maxlength="20" placeholder="이름을 한 번 더" autocomplete="off">
+      </div>
+      <div class="stamp" id="stamp">확인<br><span id="stampName"></span></div>
+    </div>
+
+    <button type="submit" class="submit" id="submitBtn">💌 선생님께 보내기</button>
+    <div class="error" id="error"></div>
+  </form>
+
+  <div class="card" id="done">
+    <div class="big">📮</div>
+    <h2>선생님께 잘 전달됐어요!</h2>
+    <p>용기 내서 써 줘서 고마워요.<br>선생님이 읽어 보고 따로 이야기해 줄게요.</p>
+    <div class="ticket">접수번호 <span id="ticketId"></span></div><br>
+    <button class="submit" style="max-width:280px" onclick="resetForm()">처음 화면으로</button>
+  </div>
+</div>
+
+<script>
+/* ===================== 설정 ===================== */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwY6ZBqUaf7mHF3xkS2pZWjJs_QGCn3PK4R0CMyFpqJrFyfJgRYh9kQsj9BFUCSh4Xj/exec';
+/* ================================================ */
+
+const $ = id => document.getElementById(id);
+const configured = !SCRIPT_URL.includes('여기에');
+if (!configured) $('setupWarn').style.display = 'block';
+
+// 선택 칩 만들기
+document.querySelectorAll('.chips').forEach(box => {
+  const name = box.dataset.name, type = box.dataset.type;
+  [...box.querySelectorAll('span')].forEach((sp, i) => {
+    const id = `${name}_${i}`, text = sp.textContent;
+    const inp = document.createElement('input');
+    Object.assign(inp, { type, name, id, value: text });
+    const lb = document.createElement('label');
+    lb.htmlFor = id; lb.textContent = text;
+    sp.replaceWith(inp, lb);
+  });
+});
+
+const getRadio = n => (document.querySelector(`input[name="${n}"]:checked`) || {}).value || '';
+const getChecks = n => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(i => i.value);
+
+// 글자 수
+$('story').addEventListener('input', e => $('storyCount').textContent = e.target.value.length);
+
+// 급함 안내
+document.querySelectorAll('input[name="urgency"]').forEach(r =>
+  r.addEventListener('change', () => $('urgentTip').classList.toggle('show', r.value.includes('빨리') && r.checked)));
+
+// 서약 이름 + 도장
+function updatePledge() {
+  const nm = $('name').value.trim();
+  $('pledgeName').textContent = nm || ' ';
+  const ok = $('pledge').checked && nm && $('signature').value.trim() === nm;
+  $('stampName').textContent = nm;
+  $('stamp').classList.toggle('on', !!ok);
+}
+['name', 'signature'].forEach(id => $(id).addEventListener('input', updatePledge));
+$('pledge').addEventListener('change', updatePledge);
+
+// 학번은 숫자만
+$('studentId').addEventListener('input', e => e.target.value = e.target.value.replace(/\D/g, ''));
+
+function showError(msg, el) {
+  $('error').textContent = '⚠️ ' + msg;
+  $('error').classList.add('show');
+  if (el) { el.classList.add('invalid'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus?.(); }
+}
+['input', 'change'].forEach(ev => document.addEventListener(ev, e => {
+  e.target.classList?.remove('invalid');
+  $('error').classList.remove('show');
+}));
+
+$('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('error').classList.remove('show');
+
+  const studentId = $('studentId').value.trim(), name = $('name').value.trim();
+  const story = $('story').value.trim(), signature = $('signature').value.trim();
+  const topicBox = document.querySelector('[data-name="topic"]');
+
+  if (!/^\d{3,6}$/.test(studentId)) return showError('학번을 숫자로 정확히 써 주세요.', $('studentId'));
+  if (!name) return showError('이름을 써 주세요.', $('name'));
+  if (!getRadio('topic')) { topicBox.scrollIntoView({ behavior: 'smooth', block: 'center' }); return showError('어떤 이야기인지 주제를 하나 골라 주세요.'); }
+  if (story.length < 10) return showError('무슨 일이 있었는지 조금 더 자세히 써 주세요. (10자 이상)', $('story'));
+  if (!$('pledge').checked) return showError('맨 아래 약속에 체크해 주세요.', $('pledge'));
+  if (signature !== name) return showError('서명에 위에 쓴 이름과 똑같이 써 주세요.', $('signature'));
+  if (!configured) return showError('서버 주소가 설정되지 않아 보낼 수 없어요. 선생님께 알려 주세요.');
+
+  const feeling = [...getChecks('feeling'), $('feelingMore').value.trim()].filter(Boolean).join(', ');
+  const data = {
+    studentId, name, story, signature, pledge: true,
+    topic: getRadio('topic'), feeling, wish: getRadio('wish'),
+    urgency: getRadio('urgency'), times: getChecks('times').join(', ')
+  };
+
+  const btn = $('submitBtn');
+  btn.disabled = true; btn.textContent = '📨 보내는 중...';
+  try {
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'submit', data }) });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || '보내지 못했어요.');
+    $('ticketId').textContent = out.id;
+    $('form').style.display = 'none';
+    $('done').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    showError(err.message === 'Failed to fetch' ? '인터넷 연결을 확인하고 다시 보내 주세요.' : err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '💌 선생님께 보내기';
+  }
+});
+
+function resetForm() {
+  $('form').reset();
+  $('storyCount').textContent = '0';
+  $('urgentTip').classList.remove('show');
+  updatePledge();
+  $('done').style.display = 'none';
+  $('form').style.display = 'block';
+  window.scrollTo({ top: 0 });
+}
+
+// 쓰던 중 창을 닫으려 하면 확인
+window.addEventListener('beforeunload', e => {
+  if ($('form').style.display !== 'none' && $('story').value.trim().length > 0) { e.preventDefault(); e.returnValue = ''; }
+});
+</script>
+</body>
+</html>
