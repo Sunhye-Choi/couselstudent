@@ -90,6 +90,13 @@
   #done h2{font-size:1.7rem;margin:6px 0}
   #done .ticket{display:inline-block;margin:10px 0 18px;padding:8px 18px;border-radius:12px;background:var(--mint);font-family:'Jua';font-size:1.2rem}
   .setup-warn{display:none;background:#fff;border:3px solid var(--red);color:var(--red);font-weight:bold}
+  .help-tip{display:none;margin-top:10px;padding:12px 14px;border-radius:12px;background:#fff7e0;border:2px solid #f6d365;line-height:1.7}
+  .help-tip.show{display:block}
+  .help-tip b{color:#b45309}
+  #closed{display:none;text-align:center;padding:40px 20px}
+  #closed .big{font-size:4rem}
+  #closed h2{font-size:1.6rem;margin:6px 0 10px}
+  #closed p{white-space:pre-wrap;font-size:1.1rem}
   @media (max-width:520px){header h1{font-size:1.6rem}.stamp{width:62px;height:62px;font-size:.9rem}}
 </style>
 </head>
@@ -113,7 +120,14 @@
     </ul>
   </div>
 
-  <div class="card privacy">🔒 여기에 쓴 내용은 <b>담임 선생님만</b> 볼 수 있어요. 친구들은 볼 수 없어요.</div>
+  <div class="card privacy">🔒 여기에 쓴 내용은 <b>담임 선생님</b>이 읽어요. 친구들은 볼 수 없어요.<br>
+    다만 <b>안전이 걱정되거나 꼭 도움이 필요할 때</b>는 보호자님이나 상담 선생님과 함께 이야기할 수 있어요. 그럴 때는 선생님이 먼저 여러분에게 말해 줄게요.</div>
+
+  <div class="card" id="closed">
+    <div class="big">🌙</div>
+    <h2>지금은 상담 신청을 쉬고 있어요</h2>
+    <p id="closedMsg"></p>
+  </div>
 
   <form id="form" novalidate>
     <div class="card">
@@ -142,6 +156,12 @@
       <p class="hint">✏️ <b>언제</b>, <b>누구와</b>, <b>어떤 일</b>이 있었는지 순서대로 써 보세요. 생각나는 대로 써도 괜찮아요.</p>
       <textarea id="story" maxlength="3000" placeholder="예: 지난주 금요일 점심시간에, 같은 반 친구와 ○○ 때문에 다퉜어요. 그 뒤로..."></textarea>
       <div class="counter"><span id="storyCount">0</span> / 3000자 (최소 10자)</div>
+      <div class="help-tip" id="helpLife">💛 지금 많이 힘들었구나. 써 줘서 고마워요.<br>
+        이 글은 선생님이 <b>나중에</b> 읽게 돼요. 지금 바로 이야기할 사람이 필요하면<br>
+        <b>☎ 109</b> (자살예방 상담전화, 24시간) · <b>☎ 1388</b> (청소년 상담, 문자 #1388) 또는 가까운 선생님께 <b>바로</b> 말해 주세요.<br>
+        신청서는 그대로 보내도 괜찮아요.</div>
+      <div class="help-tip" id="helpViolence">🛡️ 누군가 나를 때리거나 괴롭히고 있다면 혼자 참지 않아도 돼요.<br>
+        신청서를 보내고, 선생님께 <b>직접</b>도 말해 주세요. <b>☎ 117</b> (학교폭력 신고·상담, 문자 #0117)에서도 도움을 받을 수 있어요.</div>
     </div>
 
     <div class="card">
@@ -229,8 +249,27 @@ document.querySelectorAll('.chips').forEach(box => {
 const getRadio = n => (document.querySelector(`input[name="${n}"]:checked`) || {}).value || '';
 const getChecks = n => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(i => i.value);
 
-// 글자 수
-$('story').addEventListener('input', e => $('storyCount').textContent = e.target.value.length);
+// 글자 수 + 힘든 표현이 보이면 바로 도움받을 곳 안내
+const LIFE_WORDS = ['죽고싶', '죽을래', '죽어버리', '죽고말', '자살', '자해', '손목을', '뛰어내', '사라지고싶', '없어지고싶', '살기싫', '살고싶지않', '태어나지말'];
+const VIOLENCE_WORDS = ['때렸', '때려', '때리', '폭행', '협박', '괴롭', '왕따', '따돌', '돈을뺏', '돈뺏', '빼앗', '셔틀', '한테맞', '에게맞', '성추행', '성폭', '몰카', '몰래찍', '학대'];
+$('story').addEventListener('input', e => {
+  $('storyCount').textContent = e.target.value.length;
+  const t = e.target.value.replace(/\s/g, '');
+  $('helpLife').classList.toggle('show', LIFE_WORDS.some(w => t.includes(w)));
+  $('helpViolence').classList.toggle('show', VIOLENCE_WORDS.some(w => t.includes(w)));
+});
+
+// 신청을 받고 있는지 확인
+function showClosed(msg) {
+  $('closedMsg').textContent = msg || '';
+  $('closed').style.display = 'block';
+  $('form').style.display = 'none';
+}
+if (configured) {
+  fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'publicStatus' }) })
+    .then(r => r.json()).then(o => { if (o.ok && o.accepting === false) showClosed(o.closedMsg); })
+    .catch(() => {});
+}
 
 // 급함 안내
 document.querySelectorAll('input[name="urgency"]').forEach(r =>
@@ -288,6 +327,7 @@ $('form').addEventListener('submit', async e => {
   try {
     const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'submit', data }) });
     const out = await res.json();
+    if (out.closed) { showClosed(out.error); return; }
     if (!out.ok) throw new Error(out.error || '보내지 못했어요.');
     $('ticketId').textContent = out.id;
     $('form').style.display = 'none';
@@ -304,6 +344,7 @@ function resetForm() {
   $('form').reset();
   $('storyCount').textContent = '0';
   $('urgentTip').classList.remove('show');
+  $('helpLife').classList.remove('show'); $('helpViolence').classList.remove('show');
   updatePledge();
   $('done').style.display = 'none';
   $('form').style.display = 'block';
